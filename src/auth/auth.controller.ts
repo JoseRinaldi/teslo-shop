@@ -1,6 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { Controller, Get, Post, Body, Headers, UseGuards, Req } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
+import { User } from './entities/user.entity';
 import { CreateUserDto, LoginUserDto } from './dto';
+
+import { AuthService } from './auth.service';
+import { GetUser, RawHeaders } from './decorators';
+import { IncomingHttpHeaders } from 'http';
 
 
 
@@ -18,23 +24,27 @@ export class AuthController {
   login(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
   }
-  // @Get()
-  // findAll() {
-  //   return this.authService.findAll();
-  // }
+  
+  @Get('private')
+  @UseGuards( AuthGuard() )
+  testingPrivateRoute(
+     @Req() request: Express.Request,
+     @GetUser() user: User,
+     @GetUser('email') userEmail: string,
+    
+     @RawHeaders() rawHeaders: string[],
+     @Headers() headers: IncomingHttpHeaders,
+   ) 
+  {
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.authService.findOne(+id);
-  // }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-  //   return this.authService.update(+id, updateAuthDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.authService.remove(+id);
-  // }
+    return {
+      ok: true,
+      message: 'Hola Mundo Private',
+      user,
+      userEmail,
+      rawHeaders,
+      headers
+    }
+  }
 }
