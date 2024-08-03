@@ -24,6 +24,7 @@ import { AuthModule } from './auth/auth.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    
 
     ServeStaticModule.forRoot({ 
       rootPath: join(__dirname,'..','public'), 
